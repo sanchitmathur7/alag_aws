@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+       /* Common table style */
+       .no-style table {
+           width: 80%;
+           padding: 10px;
+           border-collapse: collapse;
+           margin-top: 20px;
+           margin-bottom: 20px;
+           align-items: center;
+           margin: 0 auto;
+       }
+       table th, table td {
+            padding: 10px;
+            border: 1px solid #4B0082;
+            align-content: center;
+            align-items: center;
+            height: 1px;
+       }
+
+
+       /* Custom widths for each column */
+        .no-style th:first-child, .no-style td:first-child {
+           width: unset; /* Adjust as needed */
+       }
+
+        .no-style th:nth-child(2), .no-style td:nth-child(2) {
+           width: unset; /* Adjust as needed */
+       }
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Analytics Dashboard</title>
+   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+   <script>
+       // Injected data from Flask
+       const analyticsData = {{ data | tojson }};
+       console.log(analyticsData); // Verify data in the console
+   </script>
+</head>
+<body>
+    <header>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" href="http://www.synopsys.com" alt="SYNOPSYS">
+    </div>
+    <div class="navigation">
+        <a href="{{ url_for('edgetts.edgetts_interface') }}" style="display:inline;">
+           <button class="home-button">iSpeak</button>
+        </a>
+
+    </div>
+   </header>
+   <h1>Analytics Dashboard</h1>
+   <center>
+   <button id="download-btn" class="download-csv-button">Download CSV</button></center>
+   <br>
+   <table border="1" class="no-style">
+       <thead>
+           <tr>
+               <th>Action</th>
+               <th>Date</th>
+               <th>Notes</th>
+               <th>Number of Audios</th>
+               <th>Time (IST)</th>
+               <th>Total Audio Duration (mins.)</th>
+               <th>User IP Address</th>
+           </tr>
+       </thead>
+       <tbody id="analytics-table-body">
+           <!-- Rows will be dynamically generated -->
+       </tbody>
+   </table>
+   <script>
+       const tableBody = document.getElementById("analytics-table-body");
+       analyticsData.forEach(entry => {
+           const row = document.createElement("tr");
+           Object.values(entry).forEach(value => {
+               const cell = document.createElement("td");
+               cell.textContent = value;
+               row.appendChild(cell);
+           });
+           tableBody.appendChild(row);
+       });
+              // Handle download button click
+       document.getElementById('download-btn').addEventListener('click', () => {
+           window.location.href = '/download_analytics';
+       });
+   </script>
+</body>
+<br>
+<footer><center>CIEG</center></footer>
+</html>

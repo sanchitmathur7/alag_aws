@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transcript Processor</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="SYNOPSYS">
+    </div>
+    <div class="navigation">
+        <a href="{{ url_for('edgetts.edgetts_interface') }}" style="display:inline;">
+           <button class="home-button">iSpeak</button>
+        </a>
+        <form action="/form" style="display:inline;">
+            <button type="submit" class="vocabulary-update">Vocabulary Update</button>
+        </form>
+
+    </div>
+</header>  
+   <div class="container d-flex flex-column justify-content-center align-items-center">
+     <div class="card mt-5 p-4">
+       <h1 class="h3 mb-3 font-weight-normal text-center"><c>Upload Transcript for Processing</c></h1>
+       <form method="post" enctype="multipart/form-data">
+         <div class="mb-3">
+           <label for="file" class="form-label"><c>Choose a transcript file</c></label>
+           <input type="file" class="form-control" id="file" name="file" required>
+         </div><br><c> 
+         <button type="submit" class="download_audio"><c>Upload</c></button><br>
+       </form>
+       {% if filename %}
+         <div class="mt-3 text-center">
+           <a href="{{ url_for('download_file', filename=filename) }}" class="btn btn-success w-100"><c>Download Processed File</c></a>
+         </div>
+       {% endif %}
+     </div>
+   </div>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+   <script>
+    // Toggle chat window visibility
+    function toggleChatWindow() {
+        var chatWindow = document.getElementById("chat-window");
+        if (chatWindow.style.display === "none" || chatWindow.style.display === "") {
+            chatWindow.style.display = "flex";
+        } else {
+            chatWindow.style.display = "none";
+        }
+    }
+ 
+    // Send message function
+    function sendMessage() {
+        var userInput = document.getElementById("user-input").value;
+        if (userInput === "") return;
+ 
+        var chatBox = document.getElementById("chat-box");
+ 
+        var userMessage = document.createElement("div");
+        userMessage.textContent = "You: " + userInput;
+        chatBox.appendChild(userMessage);
+ 
+        fetch("/api/get_response", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: userInput })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            var botMessage = document.createElement("div");
+            botMessage.textContent = "Sam: " + data.response;
+            chatBox.appendChild(botMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            var errorMessage = document.createElement("div");
+            errorMessage.textContent = "Sam: Sorry, there was an error. Please try again later.";
+            chatBox.appendChild(errorMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+ 
+        document.getElementById("user-input").value = "";
+    }
+ </script>
+
+<!-- Chatbot Icon -->
+<div class="chatbot-icon" onclick="toggleChatWindow()"></div>
+
+<!-- Chat Window -->
+<div class="chat-window" id="chat-window">
+   <div class="chat-header">
+       iSpeak BOT
+   </div>
+   <div class="chat-box" id="chat-box">
+       <!-- Messages will appear here -->
+   </div>
+   <div class="user-input">
+       <input type="text" id="user-input" placeholder="Type a message...">
+       <button onclick="sendMessage()">Send</button>
+   </div>
+</div>
+
+ </body>
+ <footer><center>CIEG</center></footer>
+</html>

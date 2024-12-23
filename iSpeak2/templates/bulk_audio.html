@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Bulk Audio Generation</title>
+   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='logo.png') }}" href="http://www.synopsys.com" alt="SYNOPSYS">
+        </div>
+        <div class="navigation">
+            <form action="/transcript" style="display:inline;">
+                <button type="submit" class="generate-bulk-button">Transcript Processor</button>
+            </form>
+            <form action="/form" style="display:inline;">
+                <button type="submit" class="vocabulary-update">Vocabulary Update</button>
+            </form>
+            <a href="/"><button type="submit" class="home-button">Home</button></a>
+            <form action="/logout" method="post" style="display:inline;">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+            <a href="http://10.192.108.65:3000/" target="_blank" style="display:inline;">
+            <button class="silence-button">Silence Adder</button>
+            </a>
+        </div>
+    </header>
+   <h1>Bulk Audio Generation</h1>
+   <form action="{{ url_for('bulk_audio') }}" method="post" enctype="multipart/form-data">
+       <div>
+           <label for="doc_file"><center>Upload DOC File:</center></label><br>
+           <input type="file" id="doc_file" name="doc_file" class="upload-doc-button" accept=".doc,.docx" required>
+       </div>
+       <div class="drop-down">
+           <label for="voice"><center>Select Voice:</center></label><br>
+           <select class="drop-down" id="voice" name="voice" required><center>
+               <option value="tacotron2">Voice Option 1</option>
+               <option value="edge_tts">Voice Option 4</option>
+               <option value="bark_suno">Voice Option 3</option></center>
+           </select>
+           
+       </div>
+       <div id="preset-container" text-align:center class="drop-down" style="display: none;">
+           <label for="preset"><center>Select Preset:</center></label>
+           <select class="drop-down" id="preset" name="preset"><center>
+               <!-- Add preset options as needed -->
+               <option value="v2/en_speaker_0">Speaker 0 En M</option>
+               <option value="v2/en_speaker_1">Speaker 1 En M</option>
+               <option value="v2/en_speaker_2">Speaker 2 En M</option>
+               <option value="v2/en_speaker_3">Speaker 3 En M</option>
+               <option value="v2/en_speaker_4">Speaker 4 En M</option>
+               <option value="v2/en_speaker_5">Speaker 5 En M</option>
+               <option value="v2/en_speaker_6">Speaker 6 En M</option>
+               <option value="v2/en_speaker_7">Speaker 7 En M</option>
+               <option value="v2/en_speaker_8">Speaker 8 En M</option>
+               <option value="v2/en_speaker_9">Speaker 9 En F</option>
+
+               <option value="v2/zh_speaker_0">Speaker 0 Chinese M</option>
+               <option value="v2/zh_speaker_1">Speaker 1 Chinese M</option>
+               <option value="v2/zh_speaker_2">Speaker 2 Chinese M</option>
+               <option value="v2/zh_speaker_3">Speaker 3 Chinese M</option>
+               <option value="v2/zh_speaker_4">Speaker 4 Chinese F</option>
+               <option value="v2/zh_speaker_5">Speaker 5 Chinese M</option>
+               <option value="v2/zh_speaker_6">Speaker 6 Chinese F</option>
+               <option value="v2/zh_speaker_7">Speaker 7 Chinese F</option>
+               <option value="v2/zh_speaker_8">Speaker 8 Chinese M</option>
+               <option value="v2/zh_speaker_9">Speaker 9 Chinese F</option>
+
+               <option value="v2/fr_speaker_0">Speaker 0 French M</option>
+               <option value="v2/fr_speaker_1">Speaker 1 French F</option>
+               <option value="v2/fr_speaker_2">Speaker 2 French F</option>
+               <option value="v2/fr_speaker_3">Speaker 3 French M</option>
+               <option value="v2/fr_speaker_4">Speaker 4 French M</option>
+               <option value="v2/fr_speaker_5">Speaker 5 French F</option>
+               <option value="v2/fr_speaker_6">Speaker 6 French M</option>
+               <option value="v2/fr_speaker_7">Speaker 7 French M</option>
+               <option value="v2/fr_speaker_8">Speaker 8 French M</option>
+               <option value="v2/fr_speaker_9">Speaker 9 French M</option>
+
+               <option value="v2/de_speaker_0">Speaker 0 German M</option>
+               <option value="v2/de_speaker_1">Speaker 1 German M</option>
+               <option value="v2/de_speaker_2">Speaker 2 German M</option>
+               <option value="v2/de_speaker_3">Speaker 3 German F</option>
+               <option value="v2/de_speaker_4">Speaker 4 German M</option>
+               <option value="v2/de_speaker_5">Speaker 5 German M</option>
+               <option value="v2/de_speaker_6">Speaker 6 German M</option>
+               <option value="v2/de_speaker_7">Speaker 7 German M</option>
+               <option value="v2/de_speaker_8">Speaker 8 German F</option>
+               <option value="v2/de_speaker_9">Speaker 9 German M</option>
+            
+               <option value="v2/hi_speaker_0">Speaker 0 Hindi F</option>
+               <option value="v2/hi_speaker_1">Speaker 1 Hindi F</option>
+               <option value="v2/hi_speaker_2">Speaker 2 Hindi M</option>
+               <option value="v2/hi_speaker_3">Speaker 3 Hindi F</option>
+               <option value="v2/hi_speaker_4">Speaker 4 Hindi F</option>
+               <option value="v2/hi_speaker_5">Speaker 5 Hindi M</option>
+               <option value="v2/hi_speaker_6">Speaker 6 Hindi M</option>
+               <option value="v2/hi_speaker_7">Speaker 7 Hindi M</option>
+               <option value="v2/hi_speaker_8">Speaker 8 Hindi M</option>
+               <option value="v2/hi_speaker_9">Speaker 9 Hindi F</option>
+
+               <option value="v2/it_speaker_0">Speaker 0 Italian M</option>
+               <option value="v2/it_speaker_1">Speaker 1 Italian M</option>
+               <option value="v2/it_speaker_2">Speaker 2 Italian F</option>
+               <option value="v2/it_speaker_3">Speaker 3 Italian M</option>
+               <option value="v2/it_speaker_4">Speaker 4 Italian M</option>
+               <option value="v2/it_speaker_5">Speaker 5 Italian M</option>
+               <option value="v2/it_speaker_6">Speaker 6 Italian M</option>
+               <option value="v2/it_speaker_7">Speaker 7 Italian F</option>
+               <option value="v2/it_speaker_8">Speaker 8 Italian M</option>
+               <option value="v2/it_speaker_9">Speaker 9 Italian F</option>
+
+               <option value="v2/ja_speaker_0">Speaker 0 Japanese F</option>
+               <option value="v2/ja_speaker_1">Speaker 1 Japanese F</option>
+               <option value="v2/ja_speaker_2">Speaker 2 Japanese M</option>
+               <option value="v2/ja_speaker_3">Speaker 3 Japanese F</option>
+               <option value="v2/ja_speaker_4">Speaker 4 Japanese F</option>
+               <option value="v2/ja_speaker_5">Speaker 5 Japanese F</option>
+               <option value="v2/ja_speaker_6">Speaker 6 Japanese M</option>
+               <option value="v2/ja_speaker_7">Speaker 7 Japanese F</option>
+               <option value="v2/ja_speaker_8">Speaker 8 Japanese F</option>
+               <option value="v2/ja_speaker_9">Speaker 9 Japanese F</option>
+
+               <option value="v2/ko_speaker_0">Speaker 0 Korean F</option>
+               <option value="v2/ko_speaker_1">Speaker 0 Korean M</option>
+               <option value="v2/ko_speaker_2">Speaker 0 Korean M</option>
+               <option value="v2/ko_speaker_3">Speaker 0 Korean M</option>
+               <option value="v2/ko_speaker_4">Speaker 0 Korean M</option>
+               <option value="v2/ko_speaker_5">Speaker 0 Korean M</option>
+               <option value="v2/ko_speaker_6">Speaker 0 Korean M</option>
+               <option value="v2/ko_speaker_7">Speaker 0 Korean M</option>
+               <option value="v2/ko_speaker_8">Speaker 0 Korean M</option>
+               <option value="v2/ko_speaker_9">Speaker 0 Korean M</option>
+
+               <option value="v2/pl_speaker_0">Speaker 0 Polish M</option>
+               <option value="v2/pl_speaker_1">Speaker 1 Polish M</option>
+               <option value="v2/pl_speaker_2">Speaker 2 Polish M</option>
+               <option value="v2/pl_speaker_3">Speaker 3 Polish M</option>
+               <option value="v2/pl_speaker_4">Speaker 4 Polish F</option>
+               <option value="v2/pl_speaker_5">Speaker 5 Polish M</option>
+               <option value="v2/pl_speaker_6">Speaker 6 Polish F</option>
+               <option value="v2/pl_speaker_7">Speaker 7 Polish M</option>
+               <option value="v2/pl_speaker_8">Speaker 8 Polish M</option>
+               <option value="v2/pl_speaker_9">Speaker 9 Polish F</option>
+
+               <option value="v2/pt_speaker_0">Speaker 0 Portuguese M</option>
+               <option value="v2/pt_speaker_1">Speaker 1 Portuguese M</option>
+               <option value="v2/pt_speaker_2">Speaker 2 Portuguese M</option>
+               <option value="v2/pt_speaker_3">Speaker 3 Portuguese M</option>
+               <option value="v2/pt_speaker_4">Speaker 4 Portuguese M</option>
+               <option value="v2/pt_speaker_5">Speaker 5 Portuguese M</option>
+               <option value="v2/pt_speaker_6">Speaker 6 Portuguese M</option>
+               <option value="v2/pt_speaker_7">Speaker 7 Portuguese M</option>
+               <option value="v2/pt_speaker_8">Speaker 8 Portuguese M</option>
+               <option value="v2/pt_speaker_9">Speaker 9 Portuguese M</option>
+
+               <option value="v2/ru_speaker_0">Speaker 0 Russian M</option>
+               <option value="v2/ru_speaker_1">Speaker 1 Russian M</option>
+               <option value="v2/ru_speaker_2">Speaker 2 Russian M</option>
+               <option value="v2/ru_speaker_3">Speaker 3 Russian M</option>
+               <option value="v2/ru_speaker_4">Speaker 4 Russian M</option>
+               <option value="v2/ru_speaker_5">Speaker 5 Russian F</option>
+               <option value="v2/ru_speaker_6">Speaker 6 Russian F</option>
+               <option value="v2/ru_speaker_7">Speaker 7 Russian M</option>
+               <option value="v2/ru_speaker_8">Speaker 8 Russian M</option>
+               <option value="v2/ru_speaker_9">Speaker 9 Russian F</option>
+
+               <option value="v2/es_speaker_0">Speaker 0 Spanish M</option>
+               <option value="v2/es_speaker_1">Speaker 1 Spanish M</option>
+               <option value="v2/es_speaker_2">Speaker 2 Spanish M</option>
+               <option value="v2/es_speaker_3">Speaker 3 Spanish M</option>
+               <option value="v2/es_speaker_4">Speaker 4 Spanish M</option>
+               <option value="v2/es_speaker_5">Speaker 5 Spanish M</option>
+               <option value="v2/es_speaker_6">Speaker 6 Spanish M</option>
+               <option value="v2/es_speaker_7">Speaker 7 Spanish M</option>
+               <option value="v2/es_speaker_8">Speaker 8 Spanish F</option>
+               <option value="v2/es_speaker_9">Speaker 9 Spanish F</option>
+
+               <option value="v2/tr_speaker_0">Speaker 0 Turkish M</option>
+               <option value="v2/tr_speaker_1">Speaker 1 Turkish M</option>
+               <option value="v2/tr_speaker_2">Speaker 2 Turkish M</option>
+               <option value="v2/tr_speaker_3">Speaker 3 Turkish M</option>
+               <option value="v2/tr_speaker_4">Speaker 4 Turkish F</option>
+               <option value="v2/tr_speaker_5">Speaker 5 Turkish F</option>
+               <option value="v2/tr_speaker_6">Speaker 6 Turkish M</option>
+               <option value="v2/tr_speaker_7">Speaker 7 Turkish M</option>
+               <option value="v2/tr_speaker_8">Speaker 8 Turkish M</option>
+               <option value="v2/tr_speaker_9">Speaker 9 Turkish M</option></center>
+            </select>
+       </div>
+       <div>
+          <br><button type="submit" class="generate-audio-button"><b>Generate Audio</b></button>
+       </div>
+   </form>
+   <script>
+       document.getElementById('voice').addEventListener('change', function () {
+           var presetContainer = document.getElementById('preset-container');
+           if (this.value === 'bark_suno') {
+               presetContainer.style.display = 'block';
+           } else {
+               presetContainer.style.display = 'none';
+           }
+       });
+   </script>
+
+<script>
+    // Toggle chat window visibility
+    function toggleChatWindow() {
+        var chatWindow = document.getElementById("chat-window");
+        if (chatWindow.style.display === "none" || chatWindow.style.display === "") {
+            chatWindow.style.display = "flex";
+        } else {
+            chatWindow.style.display = "none";
+        }
+    }
+ 
+    // Send message function
+    function sendMessage() {
+        var userInput = document.getElementById("user-input").value;
+        if (userInput === "") return;
+ 
+        var chatBox = document.getElementById("chat-box");
+ 
+        var userMessage = document.createElement("div");
+        userMessage.textContent = "You: " + userInput;
+        chatBox.appendChild(userMessage);
+ 
+        fetch("/api/get_response", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: userInput })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            var botMessage = document.createElement("div");
+            botMessage.textContent = "Sam: " + data.response;
+            chatBox.appendChild(botMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            var errorMessage = document.createElement("div");
+            errorMessage.textContent = "Sam: Sorry, there was an error. Please try again later.";
+            chatBox.appendChild(errorMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+ 
+        document.getElementById("user-input").value = "";
+    }
+ </script>
+
+<!-- Chatbot Icon -->
+<div class="chatbot-icon" onclick="toggleChatWindow()"></div>
+
+<!-- Chat Window -->
+<div class="chat-window" id="chat-window">
+   <div class="chat-header">
+       iSpeak BOT
+   </div>
+   <div class="chat-box" id="chat-box">
+       <!-- Messages will appear here -->
+   </div>
+   <div class="user-input">
+       <input type="text" id="user-input" placeholder="Type a message...">
+       <button onclick="sendMessage()">Send</button>
+   </div>
+</div>
+
+<script>
+    // Toggle chat window visibility
+    function toggleChatWindow() {
+        var chatWindow = document.getElementById("chat-window");
+        if (chatWindow.style.display === "none" || chatWindow.style.display === "") {
+            chatWindow.style.display = "flex";
+        } else {
+            chatWindow.style.display = "none";
+        }
+    }
+ 
+    // Send message function
+    function sendMessage() {
+        var userInput = document.getElementById("user-input").value;
+        if (userInput === "") return;
+ 
+        var chatBox = document.getElementById("chat-box");
+ 
+        var userMessage = document.createElement("div");
+        userMessage.textContent = "You: " + userInput;
+        chatBox.appendChild(userMessage);
+ 
+        fetch("/api/get_response", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: userInput })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            var botMessage = document.createElement("div");
+            botMessage.textContent = "Sam: " + data.response;
+            chatBox.appendChild(botMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            var errorMessage = document.createElement("div");
+            errorMessage.textContent = "Sam: Sorry, there was an error. Please try again later.";
+            chatBox.appendChild(errorMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+ 
+        document.getElementById("user-input").value = "";
+    }
+ </script>
+
+<!-- Chatbot Icon -->
+<div class="chatbot-icon" onclick="toggleChatWindow()"></div>
+
+<!-- Chat Window -->
+<div class="chat-window" id="chat-window">
+   <div class="chat-header">
+       iSpeak BOT
+   </div>
+   <div class="chat-box" id="chat-box">
+       <!-- Messages will appear here -->
+   </div>
+   <div class="user-input">
+       <input type="text" id="user-input" placeholder="Type a message...">
+       <button onclick="sendMessage()">Send</button>
+   </div>
+</div>
+
+</body>
+<footer><center>CIEG</center></footer>
+</html>

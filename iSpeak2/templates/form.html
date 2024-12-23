@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iSpeak</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" href="http://www.synopsys.com" alt="SYNOPSYS">
+    </div>
+    <div class="navigation">
+        <a href="{{ url_for('edgetts.edgetts_interface') }}" style="display:inline;">
+           <button class="home-button">iSpeak</button>
+        </a>
+
+    </div>
+</header>
+<body>
+   <h1>Update Vocabulary Form</h1>
+   <form action="/submit_form" method="POST">
+       <label for="original_text"><center>Original Text:</center></label><br>
+       <center><input type="text" id="original_text" name="original_text"></center><br>
+    </select><br>
+    </select><br>
+       <label for="replacement_text"><center>Replacement Text:</center></label><br>
+       <center><input type="text" id="replacement_text" name="replacement_text"></center><br><br>
+       <button type="submit" class="submit_form">Submit</button>
+   </form>
+
+   <script>
+    // Toggle chat window visibility
+    function toggleChatWindow() {
+        var chatWindow = document.getElementById("chat-window");
+        if (chatWindow.style.display === "none" || chatWindow.style.display === "") {
+            chatWindow.style.display = "flex";
+        } else {
+            chatWindow.style.display = "none";
+        }
+    }
+ 
+    // Send message function
+    function sendMessage() {
+        var userInput = document.getElementById("user-input").value;
+        if (userInput === "") return;
+ 
+        var chatBox = document.getElementById("chat-box");
+ 
+        var userMessage = document.createElement("div");
+        userMessage.textContent = "You: " + userInput;
+        chatBox.appendChild(userMessage);
+ 
+        fetch("/api/get_response", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: userInput })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            var botMessage = document.createElement("div");
+            botMessage.textContent = "Sam: " + data.response;
+            chatBox.appendChild(botMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            var errorMessage = document.createElement("div");
+            errorMessage.textContent = "Sam: Sorry, there was an error. Please try again later.";
+            chatBox.appendChild(errorMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+ 
+        document.getElementById("user-input").value = "";
+    }
+ </script>
+
+<!-- Chatbot Icon -->
+<div class="chatbot-icon" onclick="toggleChatWindow()"></div>
+
+<!-- Chat Window -->
+<div class="chat-window" id="chat-window">
+   <div class="chat-header">
+       iSpeak BOT
+   </div>
+   <div class="chat-box" id="chat-box">
+       <!-- Messages will appear here -->
+   </div>
+   <div class="user-input">
+       <input type="text" id="user-input" placeholder="Type a message...">
+       <button onclick="sendMessage()">Send</button>
+   </div>
+</div>
+
+<script>
+    // Toggle chat window visibility
+    function toggleChatWindow() {
+        var chatWindow = document.getElementById("chat-window");
+        if (chatWindow.style.display === "none" || chatWindow.style.display === "") {
+            chatWindow.style.display = "flex";
+        } else {
+            chatWindow.style.display = "none";
+        }
+    }
+ 
+    // Send message function
+    function sendMessage() {
+        var userInput = document.getElementById("user-input").value;
+        if (userInput === "") return;
+ 
+        var chatBox = document.getElementById("chat-box");
+ 
+        var userMessage = document.createElement("div");
+        userMessage.textContent = "You: " + userInput;
+        chatBox.appendChild(userMessage);
+ 
+        fetch("/api/get_response", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: userInput })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            var botMessage = document.createElement("div");
+            botMessage.textContent = "Sam: " + data.response;
+            chatBox.appendChild(botMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            var errorMessage = document.createElement("div");
+            errorMessage.textContent = "Sam: Sorry, there was an error. Please try again later.";
+            chatBox.appendChild(errorMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+ 
+        document.getElementById("user-input").value = "";
+    }
+ </script>
+
+<!-- Chatbot Icon -->
+<div class="chatbot-icon" onclick="toggleChatWindow()"></div>
+
+<!-- Chat Window -->
+<div class="chat-window" id="chat-window">
+   <div class="chat-header">
+       iSpeak BOT
+   </div>
+   <div class="chat-box" id="chat-box">
+       <!-- Messages will appear here -->
+   </div>
+   <div class="user-input">
+       <input type="text" id="user-input" placeholder="Type a message...">
+       <button onclick="sendMessage()">Send</button>
+   </div>
+</div>
+
+</body>
+<footer><center>CIEG</center></footer>
+</html>

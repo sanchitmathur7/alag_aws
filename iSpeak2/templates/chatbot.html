@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>Chatbot</title>
+   <style>
+       body {
+           font-family: Arial, sans-serif;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           height: 100vh;
+           background-color: #f4f4f4;
+       }
+       .chat-container {
+           width: 400px;
+           height: 600px;
+           background: white;
+           border-radius: 5px;
+           box-shadow: 0 0 10px rgba(0,0,0,0.1);
+           overflow: hidden;
+       }
+       .chat-box {
+           height: 80%;
+           overflow-y: scroll;
+           padding: 10px;
+       }
+       .user-input {
+           display: flex;
+           padding: 10px;
+           border-top: 1px solid #ddd;
+       }
+       .user-input input {
+           flex: 1;
+           padding: 10px;
+           border: 1px solid #ddd;
+           border-radius: 3px;
+           margin-right: 10px;
+       }
+       .user-input button {
+           padding: 10px 20px;
+           border: none;
+           background: #333;
+           color: white;
+           border-radius: 3px;
+           cursor: pointer;
+       }
+   </style>
+</head>
+<body>
+   <div class="chat-container">
+       <div class="chat-box" id="chat-box">
+           <!-- Messages will appear here -->
+       </div>
+       <div class="user-input">
+           <input type="text" id="user-input" placeholder="Type a message...">
+           <button onclick="sendMessage()">Send</button>
+       </div>
+   </div>
+
+   <script>
+       function sendMessage() {
+           var userInput = document.getElementById("user-input").value;
+           if (userInput === "") return;
+
+           var chatBox = document.getElementById("chat-box");
+
+           var userMessage = document.createElement("div");
+           userMessage.textContent = "You: " + userInput;
+           chatBox.appendChild(userMessage);
+
+           fetch("/get_response", {
+               method: "POST",
+               headers: {
+                   "Content-Type": "application/x-www-form-urlencoded"
+               },
+               body: "msg=" + userInput
+           })
+           .then(response => response.json())
+           .then(data => {
+               var botMessage = document.createElement("div");
+               botMessage.textContent = "Sam: " + data.response;
+               chatBox.appendChild(botMessage);
+               chatBox.scrollTop = chatBox.scrollHeight;
+           });
+
+           document.getElementById("user-input").value = "";
+       }
+   </script>
+</body>
+</html>

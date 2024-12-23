@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iSpeak</title>
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" href="http://www.synopsys.com" alt="SYNOPSYS">
+    </div>
+    <div class="navigation">
+        <a href="/"><button type="submit" class="home-button">Home</button></a>
+        <form action="/transcript" style="display:inline;">
+                <button type="submit" class="generate-bulk-button">Transcript Processor</button>
+        </form>
+        <form action="/form" style="display:inline;">
+            <button type="submit" class="vocabulary-update">Vocabulary Update</button>
+        </form>
+
+        
+        <a href="http://10.192.108.65:3000/" target="_blank" style="display:inline;">
+          <button class="silence-button">Silence Adder</button>
+        </a>
+        <a href="{{ url_for('edgetts.edgetts_interface') }}" style="display:inline;">
+           <button class="home-button">iSpeak</button>
+        </a>
+
+        <form action="/logout" method="post" style="display:inline;">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+
+    </div>
+</header>
+       <h1>Speaker Notes Extractor</h1>
+       <br>
+       <center><form method="post" enctype="multipart/form-data">
+           <input type="file" name="file" required>
+           <br><br>
+           <button type="submit" class="generate-audio-button"><b>Upload and Extract Notes</b></button></center>
+       </form>
+   </div>
+</body>
+<br>
+<br>
+<footer><center>CIEG <form action="/feature_request" style="display:inline;">
+
+    <button type="submit" class="feature-request-button">Feedback</button>
+
+</form></center>
+</footer>
+<br>
+<br>
+</html>

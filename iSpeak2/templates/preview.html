@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Audio Preview</title>
+   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="SYNOPSYS">
+        </div>
+        <div class="navigation">
+            <form action="/form" style="display:inline;">
+                <button type="submit" class="vocabulary-update">Vocabulary Update</button>
+            </form>
+            <form action="/bulk_audio" style="display:inline;">
+                <button type="submit" class="generate-bulk-button">Generate Bulk Audio</button>
+            </form>
+            <a href="/"><button type="submit" class="home-button">Home</button></a>
+            <form action="/logout" method="post" style="display:inline;">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+        </div>
+    </header>
+   <div class="container">
+       <h1>Audio Preview</h1>
+       <audio controls>
+           <source src="{{ audio_path }} {{ concatenated_audio }}" type="audio/wav">
+           Your browser does not support the audio element.
+       </audio>
+       <form action="/download_audio" method="post">
+           <input type="hidden" name="audio_path" value="{{ audio_path }}">
+           <button type="submit" class="download_audio">Download Audio</button>
+       </form>
+   </div>
+
+   <script>
+    // Toggle chat window visibility
+    function toggleChatWindow() {
+        var chatWindow = document.getElementById("chat-window");
+        if (chatWindow.style.display === "none" || chatWindow.style.display === "") {
+            chatWindow.style.display = "flex";
+        } else {
+            chatWindow.style.display = "none";
+        }
+    }
+ 
+    // Send message function
+    function sendMessage() {
+        var userInput = document.getElementById("user-input").value;
+        if (userInput === "") return;
+ 
+        var chatBox = document.getElementById("chat-box");
+ 
+        var userMessage = document.createElement("div");
+        userMessage.textContent = "You: " + userInput;
+        chatBox.appendChild(userMessage);
+ 
+        fetch("/api/get_response", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: userInput })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            var botMessage = document.createElement("div");
+            botMessage.textContent = "Sanchit: " + data.response;
+            chatBox.appendChild(botMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            var errorMessage = document.createElement("div");
+            errorMessage.textContent = "Sam: Sorry, there was an error. Please try again later.";
+            chatBox.appendChild(errorMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+ 
+        document.getElementById("user-input").value = "";
+    }
+ </script>
+
+<!-- Chatbot Icon -->
+<div class="chatbot-icon" onclick="toggleChatWindow()"></div>
+
+<!-- Chat Window -->
+<div class="chat-window" id="chat-window">
+   <div class="chat-header">
+       iSpeak BOT
+   </div>
+   <div class="chat-box" id="chat-box">
+       <!-- Messages will appear here -->
+   </div>
+   <div class="user-input">
+       <input type="text" id="user-input" placeholder="Type a message...">
+       <button onclick="sendMessage()">Send</button>
+   </div>
+</div>
+
+</body>
+<footer><center>CIEG</center></footer>
+</html>

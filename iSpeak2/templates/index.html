@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iSpeak</title>
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='logo.png') }}" href="http://www.synopsys.com" alt="SYNOPSYS">
+    </div>
+    <div class="navigation">
+        <a href="{{ url_for('edgetts.edgetts_interface') }}" style="display:inline;">
+           <button class="home-button">iSpeak</button>
+        </a>
+        <form action="/speaker_notes" style="display:inline;">
+            <button type="submit" class="vocabulary-update">Transcript Extractor</button>
+        </form>
+        <form action="/transcript" style="display:inline;">
+                <button type="submit" class="generate-bulk-button">Transcript Processor</button>
+        </form>
+        <form action="/form" style="display:inline;">
+            <button type="submit" class="vocabulary-update">Vocabulary Update</button>
+        </form>
+
+        
+        <a href="http://10.192.108.65:3000/" target="_blank" style="display:inline;">
+          <button class="silence-button">Silence Adder</button>
+        </a>
+
+
+        <form action="/logout" method="post" style="display:inline;">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+
+    </div>
+</header>
+<h1>iSpeak</h1>
+
+<h2>Sample Audios</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Voice</th>
+            <th>Sample Audio</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>&#128117;Voice Option 1</td>
+            <td><audio controls><source src="{{ url_for('static', filename='samples/tacotron2_sample.wav') }}" type="audio/wav"><audio controls controlsList="nodownload"></audio></td>
+        </tr>
+        <tr>
+            <td>&#128103;Voice Option 2</td>
+            <td><audio controls><source src="{{ url_for('static', filename='samples/gtts_sample.mp3') }}" type="audio/mp3"></audio></td>
+        </tr>
+        <tr>
+            <td>&#129333;Voice Option 3 Speaker 0</td>
+            <td><audio controls><source src="{{ url_for('static', filename='samples/bark_suno_speaker_0.mp3') }}" type="audio/wav"></audio></td>
+        </tr>
+        <tr>
+            <td>&#128373;Voice Option 3 Speaker 1</td>
+            <td><audio controls><source src="{{ url_for('static', filename='samples/bark_suno_speaker_1.mp3') }}" type="audio/wav"></audio></td>
+        </tr>
+        <tr>
+            <td>&#128129;Voice Option 3 Speaker 2</td>
+            <td><audio controls><source src="{{ url_for('static', filename='samples/bark_suno_speaker_2.mp3') }}" type="audio/wav"></audio></td>
+        </tr>
+        <tr>
+            <td>&#128130;Voice Option 3 Speaker 3</td>
+            <td><audio controls><source src="{{ url_for('static', filename='samples/bark_suno_speaker_3.mp3') }}" type="audio/wav"></audio></td>
+        </tr>
+        <!-- Add more samples as needed -->
+    </tbody>
+
+</table>
+
+<script>
+    function showPresetOptions() {
+        var voice = document.getElementById("voice").value;
+        if (voice === "bark_suno") {
+            document.getElementById("presetOptions").style.display = "block";
+        } else {
+            document.getElementById("presetOptions").style.display = "none";
+        }
+    }
+</script>
+
+<script>
+    // Toggle chat window visibility
+    function toggleChatWindow() {
+        var chatWindow = document.getElementById("chat-window");
+        if (chatWindow.style.display === "none" || chatWindow.style.display === "") {
+            chatWindow.style.display = "flex";
+        } else {
+            chatWindow.style.display = "none";
+        }
+    }
+ 
+    // Send message function
+    function sendMessage() {
+        var userInput = document.getElementById("user-input").value;
+        if (userInput === "") return;
+ 
+        var chatBox = document.getElementById("chat-box");
+ 
+        var userMessage = document.createElement("div");
+        userMessage.textContent = "You: " + userInput;
+        chatBox.appendChild(userMessage);
+ 
+        fetch("/api/get_response", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: userInput })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            var botMessage = document.createElement("div");
+            botMessage.textContent = "Sanchit: " + data.response;
+            chatBox.appendChild(botMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            var errorMessage = document.createElement("div");
+            errorMessage.textContent = "Sanchit: Sorry, there was an error. Please try again later.";
+            chatBox.appendChild(errorMessage);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+ 
+        document.getElementById("user-input").value = "";
+    }
+ </script>
+
+<!-- Chatbot Icon -->
+<div class="chatbot-icon" onclick="toggleChatWindow()"></div>
+
+<!-- Chat Window -->
+<div class="chat-window" id="chat-window">
+   <div class="chat-header">
+       iSpeak BOT
+   </div>
+   <div class="chat-box" id="chat-box">
+       <!-- Messages will appear here -->
+   </div>
+   <div class="user-input">
+       <input type="text" id="user-input" placeholder="Type a message...">
+       <button onclick="sendMessage()">Send</button>
+   </div>
+</div>
+
+</body>
+<br>
+<br>
+<footer><center>CIEG <form action="/feature_request" style="display:inline;">
+
+    <button type="submit" class="feature-request-button">Feedback</button>
+
+</form></center>
+</footer>
+<br>
+<br>
+</html>
